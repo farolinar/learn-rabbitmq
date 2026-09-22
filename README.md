@@ -4,7 +4,7 @@ This project is a practical refresher on RabbitMQ and event-driven design writte
 
 The project was shaped around the phase-by-phase learning path in the repository docs and guided by the practical RabbitMQ and event-driven concepts taught in the community learning materials referenced at the end of this document.
 
-## Work Queue and Competing Consumers
+## I. Work Queue and Competing Consumers
 
 This is the first building block: one producer pushes jobs into a queue, and multiple consumers listen to the same queue. Each message is delivered to only one worker, which creates the classic competing-consumer pattern. That matters because it lets you scale processing horizontally without duplicating work. RabbitMQ keeps the queue durable and uses acknowledgments to make sure a message is not lost when a worker is still processing it.
 
@@ -36,7 +36,7 @@ go run ./cmd/producer "Process Order Batch" 2000
 
 This section is the foundation: it teaches how asynchronous backlog processing works without coupling the producer to a specific consumer process.
 
-## Publish / Subscribe with Fanout
+## II. Publish / Subscribe with Fanout
 
 Once a queue is understood, the next pattern is broadcast. In a fanout exchange, a producer sends a single message and RabbitMQ pushes it to every queue that is bound to that exchange. This is the classic publish/subscribe model: one event reaches all interested subscribers, not just one consumer.
 
@@ -65,7 +65,7 @@ go run ./cmd/producer/fanout
 
 This is an important step away from point-to-point messaging and toward event distribution across many services.
 
-## Topic Routing
+## III. Topic Routing
 
 The next layer is selective routing. A topic exchange allows messages to be filtered by routing keys using patterns such as one-word wildcards and multi-word wildcards. Instead of broadcasting to every queue, a producer can send a message with a route like order.created.us, and only matching consumers receive it.
 
@@ -98,7 +98,7 @@ go run ./cmd/producer/topic order.cancelled.eu ord_302
 
 This section is where RabbitMQ starts to feel like an event router instead of a simple queueing system.
 
-## Resilience, Dead Letter Handling, and Retries
+## IV. Resilience, Dead Letter Handling, and Retries
 
 The final concept focuses on failure handling. A message can be malformed, a consumer can crash while processing, or a downstream dependency can fail. In those scenarios, a robust system should not silently lose work. RabbitMQ supports dead-letter exchanges, rejection patterns, and idempotency checks so that failed messages can be inspected, quarantined, and retried intentionally.
 
